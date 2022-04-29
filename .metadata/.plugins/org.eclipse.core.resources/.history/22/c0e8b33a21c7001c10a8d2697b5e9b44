@@ -1,0 +1,16 @@
+package dataUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+public class dataReadWrite {
+	
+	public static void writeExcel(String key,String value) throws FileNotFoundException{
+		
+		File file=new File("src//main//java//resources//dataSheet.xlsx");
+		FileInputStream fis=new FileInputStream(file);
+		
+	}
+
+}

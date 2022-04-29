@@ -1,0 +1,9 @@
+package dataUtils;
+
+public class dataReadWrite {
+	
+	public static void writeExcel(String key,String value){
+		
+	}
+
+}

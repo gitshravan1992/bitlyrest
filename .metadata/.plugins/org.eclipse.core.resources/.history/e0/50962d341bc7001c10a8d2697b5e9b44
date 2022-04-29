@@ -1,0 +1,86 @@
+package basepackage;
+
+import java.io.File;
+
+public class dataReadWriteExcel {
+
+	
+	public void writeExcel(String[] dataToWrite) throws IOException{
+
+
+        File file =    new File("src//main//java//resources//DataSheet.xlsx");
+
+
+        FileInputStream inputStream = new FileInputStream(file);
+
+        Workbook guru99Workbook = null;
+
+        //Find the file extension by splitting  file name in substring and getting only extension name
+
+        String fileExtensionName = fileName.substring(fileName.indexOf("."));
+
+        //Check condition if the file is xlsx file
+
+        if(fileExtensionName.equals(".xlsx")){
+
+        //If it is xlsx file then create object of XSSFWorkbook class
+
+        guru99Workbook = new XSSFWorkbook(inputStream);
+
+        }
+
+        //Check condition if the file is xls file
+
+        else if(fileExtensionName.equals(".xls")){
+
+            //If it is xls file then create object of XSSFWorkbook class
+
+            guru99Workbook = new HSSFWorkbook(inputStream);
+
+        }    
+
+    //Read excel sheet by sheet name    
+
+    Sheet sheet = guru99Workbook.getSheet(sheetName);
+
+    //Get the current count of rows in excel file
+
+    int rowCount = sheet.getLastRowNum()-sheet.getFirstRowNum();
+
+    //Get the first row from the sheet
+
+    Row row = sheet.getRow(0);
+
+    //Create a new row and append it at last of sheet
+
+    Row newRow = sheet.createRow(rowCount+1);
+
+
+    for(int j = 0; j < row.getLastCellNum(); j++){
+
+        //Fill data in row
+
+        Cell cell = newRow.createCell(j);
+
+        cell.setCellValue(dataToWrite[j]);
+
+    }
+
+
+    inputStream.close();
+
+
+    FileOutputStream outputStream = new FileOutputStream(file);
+
+
+    guru99Workbook.write(outputStream);
+
+
+    outputStream.close();
+	
+    }
+
+    
+
+}
+}

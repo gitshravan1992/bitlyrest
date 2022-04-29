@@ -1,0 +1,21 @@
+Feature: To test services in https://bitly.com
+
+Prereq: User has created an account in bitly and also created several links
+
+
+
+Scenario Outline: To validate response body of GET/groups/{group_guid}/bitlinks/{sort}
+			
+Given user has generated "<token>" token for Authorization
+When we perform  GET/groups/{group_guid}/bitlinks/{sort}
+Then we get list of bitlinks sorted by group
+And we validate whether detail "<key>" has value "<value>"
+
+Examples:
+
+|				token						|  	  key							|					value	   					   |
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    links.id						| [bit.ly/3L8ojHm, bit.ly/3xTcl0J, bit.ly/3vwyizy] |
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    sorted_links.id				| bit.ly/3L8ojHm, bit.ly/3xTcl0J, bit.ly/3vwyizy   |
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    sorted_links.clicks			|              2, 1, 1   						   |
+
+

@@ -1,0 +1,40 @@
+Feature: To test services in https://bitly.com
+
+Prereq: User has created an account in bitly and also created several links
+
+
+
+#------------------------POST/bitlinks------------------------------#
+
+#------------------Status Code Validation---------------#
+Scenario Outline: To validate status code of  POST/bitlinks
+			
+Given user has generated "<token>" token for Authorization
+When we perform POST/bitlinks
+Then we retrieve response status code as <response>
+
+Examples:
+
+|				token						| response |
+|             invalid						|    403   | #To verify the invalid usecases
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    200   |
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    201   | #	This is will pass only once as 1st first only you can get 
+													     #	201 staus code for creation
+
+
+#------------------Response Body Validation---------------#
+
+Scenario Outline: To validate response body of  POST/bitlinks
+			
+Given user has generated "<token>" token for Authorization
+When we perform  GET/groups/{group_guid}
+Then we create a bitlink 
+And we validate whether json "<key>" has value "<value>"
+
+Examples:
+
+|				token						|  	  key		|	value	   |
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    guid		| Bm4n5pZfPiT  |
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    name		| shravanbitly |
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|   is_active	|    true	   |
+

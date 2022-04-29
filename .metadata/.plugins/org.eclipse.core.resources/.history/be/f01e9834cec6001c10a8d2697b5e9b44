@@ -1,0 +1,23 @@
+Feature: To test services in https://bitly.com
+
+Prereq: User has created an account in bitly and also created several links
+
+
+
+#------------------------POST/bitlinks------------------------------#
+
+#------------------Status Code Validation---------------#
+Scenario Outline: To validate status code of  POST/bitlinks
+			
+Given user has generated "<token>" token for Authorization
+And user has entered below json body
+|	long_url|	https://www.elsevier.com/en-in	|
+|	domain	|			bit.ly					|
+|	title	|			Elsevier				|
+
+Examples:
+
+|				token						| response |
+|             invalid						|    403   | #To verify the invalid usecases
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    201   | #	This is will pass only once as 1st first only you can get 
+			

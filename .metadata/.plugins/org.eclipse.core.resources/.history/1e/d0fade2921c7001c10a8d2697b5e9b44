@@ -1,0 +1,10 @@
+package dataUtils;
+
+public class dataReadWrite {
+	
+	public static void writeExcel(String key,String value){
+		
+		File file=new File("src//main//java//resources//dataSheet.xlsx")
+	}
+
+}

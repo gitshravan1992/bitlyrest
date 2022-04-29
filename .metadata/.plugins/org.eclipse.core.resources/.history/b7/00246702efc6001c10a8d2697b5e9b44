@@ -1,0 +1,64 @@
+Feature: To test services in https://bitly.com
+
+Prereq: User has created an account in bitly and also created several links
+
+
+
+#------------------------POST/bitlinks------------------------------#
+
+#------------------Status Code Validation---------------#
+Scenario Outline: To validate status code of  POST/bitlinks when body is not entered
+			
+Given user has generated "<token>" token for Authorization
+When user performs POST/bitlinks
+Then user retrieves response status code as <response>
+
+Examples:
+
+|				token						| response |
+|             invalid						|    403   | #To verify the invalid usecases
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    422   | #	This is will pass only once as 1st first only you can get 
+			
+
+Scenario Outline: To validate status code of  POST/bitlinks when body is entered
+		
+Given user has generated "<token>" token for Authorization
+And user has entered json body with below contents
+|	long_url |	https://www.elsevier.com/en-in	|
+|	domain	 |			bit.ly					|
+|	title	 |			Elsevier				|
+When user performs POST/bitlinks
+Then user retrieves response status code as <response>
+
+
+Examples:
+
+|				token						| response |
+|             invalid						|    403   | #To verify the invalid usecases
+#| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    201   | #	This is will pass only once as 1st first only you can get 
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|    200   | 
+
+
+
+#------------------Response Body Validation---------------#
+
+Scenario Outline: To validate response body of  POST/bitlinks
+			
+Given user has generated "<token>" token for Authorization
+And user has entered json body with below contents
+|	long_url |	https://www.elsevier.com/en-in	|
+|	domain	 |			bit.ly					|
+|	title	 |			Elsevier				|
+When user performs POST/bitlinks
+Then user creates a bitlink
+And user validates whether json body "<key>" has value "<value>"
+
+
+Examples:
+
+|				token						|  	  key		|				value	   			|
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|	long_url 	|	https://www.elsevier.com/en-in	|
+| ee5bc095f2c67d11c579b9750dd6fcef64bfe554	|	title	 	|			Elsevier				|
+
+
+			

@@ -1,0 +1,199 @@
+package stepDef;
+
+import static io.restassured.RestAssured.*;
+
+import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.testng.annotations.Test;
+
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+
+public class steps {
+	static String group_guid;
+	static String token;
+	static String url="https://api-ssl.bitly.com/v4";
+	static String username="shravanbitly";
+	Response getres;
+	static RequestSpecification tokenresponse;
+
+	@Before
+	public void setresponse(){
+		Response getres=null;
+	}
+
+	public static void setToken(String stoken){
+		token=stoken;
+
+	}
+	public static void setGroupGuid(){
+
+		Response res =
+				given().
+				header("Authorization","Bearer "+token).
+
+				when().
+				get(url+"/groups").
+
+
+				then().
+				header("Content-Type", "application/json").extract().response();
+
+
+		if(res.asString().contains("groups")){
+			ArrayList<String> groups=new ArrayList<String>();
+			groups=res.then().extract().path("groups.guid");
+			group_guid=groups.get(0).toString();
+			System.out.println("The get groups response is : "+res.asString());
+			System.out.println("The group id is : "+group_guid);
+		}
+	}
+
+	@Given("^user has generated \"([^\"]*)\" token for Authorization$") 
+	public static void authorization(String gtoken){
+		System.out.println("The authorization for token is = "+gtoken);
+		setToken(gtoken);
+		tokenresponse =
+				given().
+				header("Authorization","Bearer "+token);
+
+	} 	
+
+
+
+	@When("^we perform  GET\\/groups\\/\\{group_guid}$")
+	public void getGroups() {
+		setGroupGuid();
+		System.out.println("To perform GET response of : "+url+"/groups/"+group_guid);
+
+		getres=tokenresponse.
+				when().
+				get(url+"/groups/"+group_guid);
+	}
+
+	@Then("^we retrieve response status code as ([^\"]*)$")
+	public void validateStatusCode(int response) {	
+		getres.
+		then().
+		assertThat().
+		statusCode(response);
+
+	}
+
+	@Then("^we retrieve all details for a group$") 
+	public  void retreiveDetails(){
+		getres.
+		then().
+		header("Content-Type", "application/json").extract().response();
+		System.out.println("The get group_guid response is : "+getres.asString());
+	}
+
+	@Then("^we validate whether json \"([^\"]*)\" has value \"([^\"]*)\"$") 
+	public  void validateDetails(String key,String value){
+		getres.
+		then().
+		header("Content-Type", "application/json").extract().response();
+
+		JsonPath js = new JsonPath(getres.asString());
+		String val = js.getString(key);
+		System.out.println(val);
+		Assert.assertEquals(value, val);
+	}
+
+	@When("^we perform  GET\\/groups\\/\\{group_guid}\\/bitlinks\\/\\{sort}$")
+	public void getSortGroups() {
+		setGroupGuid();
+		System.out.println("To perform GET response of : "+url+"/groups/"+group_guid+"/bitlinks/clicks?unit=month");		
+
+		getres=tokenresponse.
+				when().
+				get(url+"/groups/"+group_guid+"/bitlinks/clicks?unit=month");
+	}
+
+	
+	@Then("^we get list of bitlinks sorted by group$") 
+	public  void validateGetResponse_Sort(){
+
+		getres.
+		then().
+		header("Content-Type", "application/json").extract().response();
+
+		System.out.println("The get sort response is : "+getres.asString());
+
+
+		ArrayList<String> sorts=getres.then().extract().path("sorted_links");
+		System.out.println("The sorted list is : "+sorts);
+	}
+
+	@Given("^we validate POST\\/bitlinks$") 
+	public static void postResponse_bitlinks(){
+		System.out.println("To perform POST response of : "+url+"/bitlinks");		
+	}
+
+
+	@Then("^we create a bitlink with parameters like longurl,domain,groupid$") 
+
+	public static void validatePostResponse_bitlinks(){
+		HashMap<String,Object> data=new HashMap<String,Object>(); 
+
+		data.put("long_url", "https://www.elsevier.com/en-in");
+		data.put("domain", "bit.ly");
+		data.put("group_guid", group_guid);
+		data.put("title", "Elsevier");
+
+		Response res =
+				given().
+				header("Authorization","Bearer "+token).
+				header("Content-Type","application/json").
+
+				contentType(ContentType.JSON).
+				body(data).
+
+				when().
+				post(url+"/bitlinks").
+
+				then().
+				assertThat().
+				statusCode(201).
+				body(
+						"long_url",Matchers.equalTo(data.get("long_url")),
+						"title",Matchers.equalTo(data.get("title"))
+						).
+
+				and().
+				header("Content-Type", "application/json").extract().response();
+
+		System.out.println("The post bitlink creation response is : "+res.asString());
+
+		JsonPath js = new JsonPath(res.asString());
+
+		String title = js.getString("title");
+		System.out.println("The created bitlink title is :"+title);		
+
+		String long_url = js.getString("long_url");
+		System.out.println("The created bitlink long_url is :"+long_url);
+
+		String id = js.getString("id");
+		System.out.println("The created bitlink id is :"+id);
+
+		String link = js.getString("link");
+		System.out.println("The created bitlink link is :"+link);
+
+		/*Assert.assertEquals(title, data.get(title));
+		Assert.assertEquals(long_url, data.get(long_url));*/ 
+
+	}
+
+
+}

@@ -1,0 +1,65 @@
+package basepackage;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Workbook;
+
+
+public class dataReadWriteExcel {
+
+
+	public void writeExcel(String column,String data) throws IOException{
+
+
+		File file =    new File("src//main//java//resources//DataSheet.xlsx");
+		FileInputStream fis = new FileInputStream(file);
+		
+		Workbook workbook = null;
+		workbook = new XSSFWorkbook(fis);
+
+
+		Sheet sheet = guru99Workbook.getSheet(sheetName);
+
+		//Get the current count of rows in excel file
+
+		int rowCount = sheet.getLastRowNum()-sheet.getFirstRowNum();
+
+		//Get the first row from the sheet
+
+		Row row = sheet.getRow(0);
+
+		//Create a new row and append it at last of sheet
+
+		Row newRow = sheet.createRow(rowCount+1);
+
+
+		for(int j = 0; j < row.getLastCellNum(); j++){
+
+			//Fill data in row
+
+			Cell cell = newRow.createCell(j);
+
+			cell.setCellValue(dataToWrite[j]);
+
+		}
+
+
+		inputStream.close();
+
+
+		FileOutputStream outputStream = new FileOutputStream(file);
+
+
+		guru99Workbook.write(outputStream);
+
+
+		outputStream.close();
+
+	}
+
+
+
+}
+}
